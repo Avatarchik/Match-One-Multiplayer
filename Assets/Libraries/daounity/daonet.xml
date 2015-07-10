@@ -1,0 +1,898 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>daonet</name>
+    </assembly>
+    <members>
+        <member name="T:DaoNet.IAuthenticationCallback">
+            <summary>
+            Implement this callback and register with <see cref="M:DaoNet.DaoAccess.AddAuthenticationCallback(DaoNet.IAuthenticationCallback)"/> to receive callbacks on authentication events.
+            If you use Unity3d DaoSettings all MonoBehaviours that implement <see cref="T:DaoNet.IAuthenticationCallback"/> and are present on scene start will be registered automatically.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IAuthenticationCallback.OnAuthenticationSuccess">
+            <summary>
+            Called when authentication was successful.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IAuthenticationCallback.OnAuthenticationError(DaoNet.Error)">
+            <summary>
+            Called when there was an <paramref name="error"/> during authentication.
+            </summary>
+            <param name="error"><see cref="T:DaoNet.Error"/></param>
+        </member>
+        <member name="M:DaoNet.IAuthenticationCallback.OnDeauthenticationSuccess">
+            <summary>
+            Called when deauthentication was successful.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IAuthenticationCallback.OnDeauthenticationError(DaoNet.Error)">
+            <summary>
+            Called when there was an <paramref name="error"/> during deauthentication.
+            </summary>
+            <param name="error"><see cref="T:DaoNet.Error"/></param>
+        </member>
+        <member name="T:DaoNet.IRPCcallback">
+            <summary>
+            Implement this callback and use with <see cref="M:DaoNet.DaoAccess.RPC(DaoNet.IRPCcallback,System.String[],System.String,System.String[])"/> to receive callback on <see cref="T:DaoNet.RPCresponse"/>.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IRPCcallback.OnError(DaoNet.Error)">
+            <summary>
+            Called when an error occured during RPC.
+            </summary>
+            <param name="error"><see cref="T:DaoNet.Error"/></param>
+        </member>
+        <member name="M:DaoNet.IRPCcallback.OnSuccess(DaoNet.RPCvalue)">
+            <summary>
+            called when RPC returns successfully.
+            </summary>
+            <param name="returnValue"><see cref="T:DaoNet.RPCvalue"/></param>
+        </member>
+        <member name="T:DaoNet.IStateCallback">
+            <summary>
+            Implement this callback and register with <see cref="M:DaoNet.DaoAccess.AddStateCallback(DaoNet.IStateCallback)"/> to receive callbacks on internal <see cref="T:DaoNet.DaoAccess.State"/> changes.
+            If you use Unity3d DaoSettings all MonoBehaviours that implement <see cref="T:DaoNet.IStateCallback"/> and are present on scene start will be registered automatically.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IStateCallback.OnStateChange(DaoNet.DaoAccess.State,DaoNet.DaoAccess.State)">
+            <summary>
+            Called whenever the internal <see cref="T:DaoNet.DaoAccess.State"/> changes from <paramref name="stateBefore"/> to <paramref name="stateNow"/>.
+            Calls to <see cref="P:DaoNet.DaoAccess.CurrentState"/> will return <paramref name="stateNow"/>.
+            </summary>
+            <param name="stateBefore"><see cref="T:DaoNet.DaoAccess.State"/></param>
+            <param name="stateNow"><see cref="T:DaoNet.DaoAccess.State"/></param>
+        </member>
+        <member name="T:DaoNet.ISyncProvider">
+            <summary>
+            Describes a periodic synchronization executer.
+            If you are not using DaoUnity then you must create one using <see cref="M:DaoNet.DaoAccess.CreateSyncProvider"/>
+            </summary>
+        </member>
+        <member name="M:DaoNet.ISyncProvider.Sync">
+            <summary>
+            Call this in your Update method to process incoming and outgoing messages.
+            </summary>
+        </member>
+        <member name="M:DaoNet.ISyncProvider.Stop">
+            <summary>
+            Disconnect and stop daonet client processing.
+            This call is synchronous. In a worst case scenario, this can block for up to one second.
+            </summary>
+        </member>
+        <member name="T:DaoNet.IZoneCallback">
+            <summary>
+            Implement this callback and register with <see cref="M:DaoNet.DaoAccess.AddZoneCallback(DaoNet.IZoneCallback,System.Boolean)"/> to receive callbacks on zone events.
+            If you use Unity3d DaoSettings all ZoneBehaviours that are present on scene start will be registered automatically.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IZoneCallback.ZoneName">
+            <summary>
+            Returns zone to which this callback will register.
+            </summary>
+            <returns>zone name</returns>
+        </member>
+        <member name="M:DaoNet.IZoneCallback.OnEnterZone">
+            <summary>
+            Called when the registered zone is entered.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IZoneCallback.OnLeaveZone">
+            <summary>
+            Called when the registered zone is left.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IZoneCallback.OnMessage(System.String)">
+            <summary>
+            Called whenever a message was received.
+            </summary>
+            <param name="message">message received from plugin</param>
+        </member>
+        <member name="M:DaoNet.IZoneCallback.OnConnectionLost">
+            <summary>
+            Called when the connection is unexpectedly dropped.
+            Until <see cref="M:DaoNet.IZoneCallback.OnReconnect"/> is called, you are not connected to the backend.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IZoneCallback.OnReconnect">
+            <summary>
+            Called when the connection is back up again after an unexpected connection drop.
+            Use this to initialize a state sync with the backend.
+            All messages sent between <see cref="M:DaoNet.IZoneCallback.OnConnectionLost"/> and <see cref="M:DaoNet.IZoneCallback.OnReconnect"/> are dropped.
+            </summary>
+        </member>
+        <member name="T:DaoNet.DaoClient">
+            <summary>
+            This is the base client which connects to the backend and handles messaging.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoClient.#ctor">
+            <summary>
+            Initialize <see cref="T:DaoNet.DaoClient"/> on <see cref="F:DaoNet.Constants.UriLocalhost"></see>.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoClient.#ctor(System.String)">
+            <summary>
+            Initialize <see cref="T:DaoNet.DaoClient"/> with custom uri endpoint.
+            </summary>
+            <param name="uri">custom endpoint</param>
+        </member>
+        <member name="M:DaoNet.DaoClient.AddLogger(DaoNet.IDaoLog)">
+            <summary>
+            Logs will be promoted to specified <paramref name="logger"/>.
+            </summary>
+            <param name="logger"><see cref="T:DaoNet.IDaoLog"/></param>
+        </member>
+        <member name="M:DaoNet.DaoClient.RemoveLogger(DaoNet.IDaoLog)">
+            <summary>
+            Remove <paramref name="logger"/> from promoted logger list.
+            </summary>
+            <param name="logger"><see cref="T:DaoNet.IDaoLog"/></param>
+        </member>
+        <member name="M:DaoNet.DaoClient.Connect">
+            <summary>
+            Connect to endpoint.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoClient.IsConnected">
+            <summary>
+            Check if connected to backend.
+            </summary>
+            <value><c>true</c> if connected, <c>false</c> otherwise</value>
+        </member>
+        <member name="M:DaoNet.DaoClient.IsRunning">
+            <summary>
+            Check if networking loop is active.
+            The loop will still be active even if <see cref="M:DaoNet.DaoClient.IsConnected"/> returns false.
+            It takes some time to dismantle the connection and shutdown gracefully.
+            </summary>
+            <returns>true if network loop active, false if shutdown</returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.Authenticate(System.String)">
+            <summary>
+            Authenticate to backend with <paramref name="username"/>.
+            </summary>
+            <param name="username">login name</param>
+        </member>
+        <member name="M:DaoNet.DaoClient.Deauthenticate">
+            <summary>
+            Deauthenticate from backend.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoClient.Disconnect">
+            <summary>
+            Disconnect and shutdown client.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoClient.Send(System.String)">
+            <summary>
+            Send <paramref name="message"/> to all occupied zones.
+            </summary>
+            <param name="message">message</param>
+        </member>
+        <member name="M:DaoNet.DaoClient.Send(System.String,System.String)">
+            <summary>
+            Send <paramref name="message"/> directly to one specific occupied <paramref name="zone"/>.
+            </summary>
+            <param name="message">message</param>
+            <param name="zone">zone</param>
+        </member>
+        <member name="M:DaoNet.DaoClient.Send(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Send <paramref name="message"/> directly to specified occupied <paramref name="zones"/>.
+            </summary>
+            <param name="message">message</param>
+            <param name="zones">zones</param>
+        </member>
+        <member name="M:DaoNet.DaoClient.SendRPC(System.String[],System.String,System.String[])">
+            <summary>
+            Initiate Remote Procedure Call (RPC) to library with namespace <paramref name="ns"/>.
+            Calls <paramref name="function"/> with given <paramref name="parameters"/>.
+            </summary>
+            <param name="ns">library's namespace</param>
+            <param name="function">function to call</param>
+            <param name="parameters">parameters to function</param>
+            <returns>Generated id for this RPC</returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.SendEnterZone(System.String,System.Boolean)">
+            <summary>
+            Send enter <paramref name="zone"/> request.
+            If <paramref name="create"/> is true and you enter a dynamic zone
+            that <paramref name="zone"/> will be created if absent.
+            </summary>
+            <param name="zone">zone name</param>
+            <param name="create">create dynamic zone if absent</param>
+        </member>
+        <member name="M:DaoNet.DaoClient.SendLeaveZone(System.String)">
+            <summary>
+            Send leave <paramref name="zone"/> request.
+            </summary>
+            <param name="zone">zone name</param>
+        </member>
+        <member name="M:DaoNet.DaoClient.SendListZones">
+            <summary>
+            Send list zones request.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoClient.CheckAck(DaoNet.Constants.Type)">
+            <summary>
+            Check if certain ack-<paramref name="type"/> response has arrived yet.
+            This will only check the oldest <see cref="T:DaoNet.Constants.Type"/> and remove it from the internal queue.
+            Checking again will then remove the remaining oldest if there is one.
+            </summary>
+            <returns><c>true</c>, if ack was received yet, <c>false</c> otherwise.</returns>
+            <param name="type"><see cref="T:DaoNet.Constants.Type"/></param>
+        </member>
+        <member name="M:DaoNet.DaoClient.CheckMessages">
+            <summary>
+            Retrieve all available messages that were received since last check.
+            </summary>
+            <returns>incoming messages</returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.CheckMessages(System.String)">
+            <summary>
+            Retrieve all available messages that were received from specific <paramref name="zone"/>
+            since last check.
+            </summary>
+            <param name="zone">zone</param>
+            <returns>incoming messages</returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.CheckMessages(System.Collections.Generic.List{System.String})">
+            <summary>
+            Retrieve all available messages that were received from specified <paramref name="zones"/>
+            since last check.
+            </summary>
+            <param name="zones">zones</param>
+            <returns>incoming messages</returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.CheckZones">
+            <summary>
+            Retrieve answer to list zones request.
+            </summary>
+            <returns>currently occupied zones or null if answer not yet received</returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.CheckRPC(System.Guid)">
+            <summary>
+            Retrieve response to Remove Procedure Call (RPC) with <paramref name="guid"/>.
+            Use <paramref name="guid"/> returned by <see cref="M:DaoNet.DaoClient.SendRPC(System.String[],System.String,System.String[])"/>.
+            </summary>
+            <param name="guid">identifier to RPC request</param>
+            <returns><see cref="T:DaoNet.RPCresponse"/></returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.Errors">
+            <summary>
+            Retrieve a copy of all received errors.
+            </summary>
+            <returns>list of <see cref="T:DaoNet.Error"/></returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.CheckError(DaoNet.Error.Code)">
+            <summary>
+            Check for specific <paramref name="errorCode"/>.
+            This will only check the oldest <see cref="T:DaoNet.Error"/> and remove it from the internal queue.
+            Checking again will then remove the remaining oldest if there is one.
+            </summary>
+            <param name="errorCode"><see cref="T:DaoNet.Error.Code"/></param>
+            <returns><see cref="T:DaoNet.Error"/> if present, or <see cref="F:DaoNet.Error.None"/></returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.ToString">
+            <summary>
+            Describes current <see cref="T:DaoNet.DaoClient"/> instance.
+            </summary>
+            <returns>string describing this instance</returns>
+        </member>
+        <member name="M:DaoNet.DaoClient.SimulateDisconnect">
+            <summary>
+            Use this to simulate a disconnect.
+            </summary>
+        </member>
+        <member name="T:DaoNet.LogLevel">
+            <summary>
+            Relates to verbosity of loggers.
+            </summary>
+        </member>
+        <member name="F:DaoNet.LogLevel.Debug">
+            <summary>
+            Maximum versobity. Shows internal byte buffers.
+            </summary>
+        </member>
+        <member name="F:DaoNet.LogLevel.Info">
+            <summary>
+            Log human readable infos.
+            </summary>
+        </member>
+        <member name="F:DaoNet.LogLevel.Warning">
+            <summary>
+            Log warnings.
+            </summary>
+        </member>
+        <member name="F:DaoNet.LogLevel.Error">
+            <summary>
+            Log errors.
+            </summary>
+        </member>
+        <member name="F:DaoNet.LogLevel.Fatal">
+            <summary>
+            Log critical failures.
+            </summary>
+        </member>
+        <member name="F:DaoNet.LogLevel.Off">
+            <summary>
+            Do not log anything.
+            </summary>
+        </member>
+        <member name="T:DaoNet.IDaoLog">
+            <summary>
+            Logger that will receive info according to its specified level.
+            </summary>
+        </member>
+        <member name="M:DaoNet.IDaoLog.IsEnabled">
+            <summary>
+            Return minimal enabled verbosity level.
+            </summary>
+            <returns><see cref="T:DaoNet.LogLevel"/></returns>
+        </member>
+        <member name="M:DaoNet.IDaoLog.Log(DaoNet.LogLevel,System.String)">
+            <summary>
+            Log message at specified level.
+            </summary>
+            <param name="level">Verbosity level of the message</param>
+            <param name="message">message</param>
+        </member>
+        <member name="T:DaoNet.DaoAccess">
+            <summary>
+            This is a convenience singleton to wrap states and handle usage of <see cref="P:DaoNet.DaoAccess.DaoClient"/>.
+            In most cases this is what you want to use to handle backend communication.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoAccess.Instance">
+            <summary>
+            Access singleton instance.
+            This will be your entrypoint for everything.
+            </summary>
+            <returns><see cref="T:DaoNet.DaoAccess"/></returns>
+        </member>
+        <member name="M:DaoNet.DaoAccess.IsStateOrHigher(DaoNet.DaoAccess.State)">
+            <summary>
+            Check if specific internal state is already reached.
+            This will also return true if a higher state then the one checked is reached.
+            To query current state use <see cref="P:DaoNet.DaoAccess.CurrentState"/>.
+            The default message processing state is <see cref="F:DaoNet.DaoAccess.State.Messaging"/>.
+            </summary>
+            <param name="state"><see cref="T:DaoNet.DaoAccess.State"/></param>
+            <returns><c>true</c> if <paramref name="state"/> reached, <c>false</c> if not yet reached</returns>
+        </member>
+        <member name="M:DaoNet.DaoAccess.Zones">
+            <summary>
+            Retrieve a list of all currently occupied zone.
+            This will reflect entered zones once the backend has acknowledged an entered zone.
+            </summary>
+            <returns>all zones</returns>
+        </member>
+        <member name="M:DaoNet.DaoAccess.AddZoneCallback(DaoNet.IZoneCallback,System.Boolean)">
+            <summary>
+            Adds specified <paramref name="zoneCallback"/>.
+            By default this will not result in entering <see cref="M:DaoNet.IZoneCallback.ZoneName"/>.
+            To enter set <paramref name="enter"/> to true or use <see cref="M:DaoNet.DaoAccess.EnterZone(System.String)"/>.
+            </summary>
+            <param name="zoneCallback"><see cref="T:DaoNet.IZoneCallback"/></param>
+            <param name="enter">enter <see cref="M:DaoNet.IZoneCallback.ZoneName"/></param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.RemoveZoneCallback(DaoNet.IZoneCallback,System.Boolean)">
+            <summary>
+            Removes specified <paramref name="zoneCallback"/>.
+            By default this will not result in leaving <see cref="M:DaoNet.IZoneCallback.ZoneName"/>.
+            To leave set <paramref name="leave"/> to true or use <see cref="M:DaoNet.DaoAccess.LeaveZone(System.String)"/>.
+            </summary>
+            <param name="zoneCallback"><see cref="T:DaoNet.IZoneCallback"/></param>
+            <param name="leave">leave <see cref="M:DaoNet.IZoneCallback.ZoneName"/></param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.ClearZoneCallbacks">
+            <summary>
+            Remove all currently registered <see cref="T:DaoNet.IZoneCallback"/>s.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoAccess.EnterZone(System.String)">
+            <summary>
+            Enter specified <paramref name="zone"/>.
+            </summary>
+            <param name="zone">zonename</param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.LeaveZone(System.String)">
+            <summary>
+            Leave specified <paramref name="zone"/>.
+            </summary>
+            <param name="zone">zonename</param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.AddStateCallback(DaoNet.IStateCallback)">
+            <summary>
+            Adds specified <paramref name="stateCallback"/>.
+            </summary>
+            <param name="stateCallback"><see cref="T:DaoNet.IStateCallback"/></param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.RemoveStateCallback(DaoNet.IStateCallback)">
+            <summary>
+            Removes specified <paramref name="stateCallback"/>.
+            </summary>
+            <param name="stateCallback"><see cref="T:DaoNet.IStateCallback"/></param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.ClearStateCallbacks">
+            <summary>
+            Remove all currently registered <see cref="T:DaoNet.IStateCallback"/>s.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoAccess.AddAuthenticationCallback(DaoNet.IAuthenticationCallback)">
+            <summary>
+            Adds specified <paramref name="authenticationCallback"/>.
+            </summary>
+            <param name="authenticationCallback"><see cref="T:DaoNet.IAuthenticationCallback"/></param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.RemoveAuthenticationCallback(DaoNet.IAuthenticationCallback)">
+            <summary>
+            Removes specified <paramref name="authenticationCallback"/>.
+            </summary>
+            <param name="authenticationCallback"><see cref="T:DaoNet.IAuthenticationCallback"/></param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.ClearAuthenticationCallbacks">
+            <summary>
+            Remove all currently registered <see cref="T:DaoNet.IAuthenticationCallback"/>s.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoAccess.RPC(DaoNet.IRPCcallback,System.String[],System.String,System.String[])">
+            <summary>
+            Initiate Remote Procedure Call (RPC) to library with namespace <paramref name="ns"/>.
+            Calls <paramref name="function"/> with given <paramref name="parameters"/>.
+            <paramref name="rpcCallback"/> will be called once the response was received.
+            </summary>
+            <param name="rpcCallback"><see cref="T:DaoNet.IRPCcallback"/></param>
+            <param name="ns">library's namespace</param>
+            <param name="function">function to call</param>
+            <param name="parameters">parameters to function</param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.Send(System.String,System.String)">
+            <summary>
+            Send a specific <paramref name="message"/> to a <paramref name="zone"/>.
+            If not yet connected to that <paramref name="zone"/> the <paramref name="message"/> will be sent as soon as you entered that <paramref name="zone"/>.
+            </summary>
+            <param name="message">message</param>
+            <param name="zone">zonename</param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.TriggerZoneUpdate">
+            <summary>
+            Sync currently assumed connected zones with actually occupied zones.
+            This is necessary when you switch zones from within a plugin.
+            Otherwise <see cref="T:DaoNet.DaoAccess"/> will have no way of knowing that a plugin changed zones.
+            </summary>
+        </member>
+        <member name="M:DaoNet.DaoAccess.CreateSyncProvider">
+            <summary>
+            Use the <see cref="T:DaoNet.ISyncProvider"/> created with this method to trigger event processing.
+            Only the first call to this method will retrieve an effective <see cref="T:DaoNet.ISyncProvider"/>.
+            </summary>
+            <returns><see cref="T:DaoNet.ISyncProvider"/></returns>
+        </member>
+        <member name="M:DaoNet.DaoAccess.LeaveZoneWithoutCallbacks(System.String)">
+            <summary>
+            This will check if specified <paramref name="zone"/> has no <see cref="T:DaoNet.IZoneCallback"/> attached.
+            This is only needed if your <see cref="T:DaoNet.IZoneCallback"/>s are destroyed outright and not by leaving zones.
+            If you use Unity3d ZoneBehaviour and have LeaveZone enabled this will be done automatically.
+            </summary>
+            <param name="zone">zonename</param>
+        </member>
+        <member name="M:DaoNet.DaoAccess.ToString">
+            <summary>
+            Describes <see cref="T:DaoNet.DaoAccess"/> singleton.
+            </summary>
+            <returns>string describing singleton instance</returns>
+        </member>
+        <member name="P:DaoNet.DaoAccess.URI">
+            <summary>
+            Backend endpoint.
+            </summary>
+        </member>
+        <member name="P:DaoNet.DaoAccess.Username">
+            <summary>
+            Set this property to the desired login name and DaoAccess will start authentication.
+            Once you set this back to empty deauthentication will be triggered.
+            </summary>
+        </member>
+        <member name="P:DaoNet.DaoAccess.DevAuthName">
+            <summary>
+            Do not rely on this in production code.
+            <see cref="P:DaoNet.DaoAccess.Username"/> has a higher priority.
+            Setting this and leaving <see cref="P:DaoNet.DaoAccess.Username"/> empty will also result in authentication.
+            </summary>
+        </member>
+        <member name="P:DaoNet.DaoAccess.Logger">
+            <summary>
+            Provide your own logger if you want to receive logging events.
+            Do this before triggering connecting by setting <see cref="P:DaoNet.DaoAccess.Username"/>.
+            DaoUnity already comes with a logger.
+            </summary>
+        </member>
+        <member name="P:DaoNet.DaoAccess.CurrentState">
+            <summary>
+            Current internal <see cref="T:DaoNet.DaoAccess.State"/>.
+            If you want to check for minimum reached state use <see cref="M:DaoNet.DaoAccess.IsStateOrHigher(DaoNet.DaoAccess.State)"/>.
+            </summary>
+        </member>
+        <member name="P:DaoNet.DaoAccess.DaoClient">
+            <summary>
+            Access underlying daonet client directly.
+            Generally this should not be necessary.
+            </summary>
+            <value><see cref="P:DaoNet.DaoAccess.DaoClient"/></value>
+        </member>
+        <member name="T:DaoNet.DaoAccess.State">
+            <summary>
+            These are internal states that keep changing as needed.
+            The default state is <see cref="F:DaoNet.DaoAccess.State.Messaging"/>.
+            That state handles messaging.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.Disconnected">
+            <summary>
+            Initial state. Not connected to backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.Disconnecting">
+            <summary>
+            Trying to dismantle connection to backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.Connecting">
+            <summary>
+            Trying to establish connection to backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.Connected">
+            <summary>
+            Successfully connected to backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.DeAuthenticating">
+            <summary>
+            Deauthenticating user from backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.Authenticating">
+            <summary>
+            Authenticating user at backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.Messaging">
+            <summary>
+            Default state for messages and after successfully entering or leaving zones.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.ZoneEntering">
+            <summary>
+            Awaiting response to entering zone.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.ZoneLeaving">
+            <summary>
+            Awaiting response to leaving zone.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoAccess.State.ZoneListing">
+            <summary>
+            Awaiting response to list zones request.
+            Response will synchronize current occupied zones.
+            </summary>
+        </member>
+        <member name="T:DaoNet.Constants">
+            <summary>
+            Useful convenience values.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.UriPlatform">
+            <summary>
+            Default uri when connecting to daoplatform.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.UriLocalhost">
+            <summary>
+            Default uri when using the devkit on the same machine.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.SecurityPolicyCheckPort">
+            <summary>
+            Port for checking security policy.
+            </summary>
+        </member>
+        <member name="T:DaoNet.Constants.Type">
+            <summary>
+            Available message types recognized by backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.OutgoingMessage">
+            <summary>
+            Common message to backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.IncomingMessage">
+            <summary>
+            Common message from backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.Authentication">
+            <summary>
+            Request authentication.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.AuthenticationAck">
+            <summary>
+            Authentication successful.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.Deauthentication">
+            <summary>
+            Request deauthentication.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.DeauthenticationAck">
+            <summary>
+            Deauthentication successful.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.EnterZone">
+            <summary>
+            Request enter zone.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.EnterZoneAck">
+            <summary>
+            Enter zone successful.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.LeaveZone">
+            <summary>
+            Request leave zone.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.LeaveZoneAck">
+            <summary>
+            Leave zone successful.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.ListZone">
+            <summary>
+            Request current zones.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.ListZoneAck">
+            <summary>
+            Current zones response.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.RPCrequest">
+            <summary>
+            Request RPC.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.RPCresponse">
+            <summary>
+            Response to RPC.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Constants.Type.Error">
+            <summary>
+            Errors indicated by backend.
+            </summary>
+        </member>
+        <member name="T:DaoNet.Error">
+            <summary>
+            Error responses from backend.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.None">
+            <summary>
+            None error is equivalent to success as no error occured.
+            </summary>
+        </member>
+        <member name="M:DaoNet.Error.ToString">
+            <summary>
+            Print error instance in human readable form.
+            </summary>
+            <returns>error string</returns>
+        </member>
+        <member name="P:DaoNet.Error.ErrorCode">
+            <summary>
+            Error code identifying this error.
+            </summary>
+        </member>
+        <member name="P:DaoNet.Error.ErrorMessage">
+            <summary>
+            Message describing this error in detail.
+            </summary>
+        </member>
+        <member name="T:DaoNet.Error.Code">
+            <summary>
+            The identifying error code of an error.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.None">
+            <summary>
+            Error code when there is no error.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.DecodingMessage">
+            <summary>
+            Error during decoding message.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.MissingType">
+            <summary>
+            Message type is missing.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.MissingFieldUser">
+            <summary>
+            Expected field 'user' but not found.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.AlreadyAuthenticated">
+            <summary>
+            User already authenticated.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.NotAuthenticated">
+            <summary>
+            User not authenticated.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.MissingFieldMessage">
+            <summary>
+            Expected field 'msg' but not found.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.ZoneEnterFailed">
+            <summary>
+            Error during entering zone.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.ZoneLeaveFailed">
+            <summary>
+            Error during leaving zone.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.DuplicateConnection">
+            <summary>
+            Cannot create connection since it is already established.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.NotInZone">
+            <summary>
+            User did not enter zone that is addressed by him.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.RPCfailed">
+            <summary>
+            Error requesting RPC.
+            </summary>
+        </member>
+        <member name="F:DaoNet.Error.Code.Timeout">
+            <summary>
+            An operation timed out.
+            </summary>
+        </member>
+        <member name="T:DaoNet.RPCvalue">
+            <summary>
+            Contains return value of <see cref="T:DaoNet.RPCresponse"/>.
+            </summary>
+        </member>
+        <member name="M:DaoNet.RPCvalue.ToString">
+            <summary>
+            Describes current <see cref="T:DaoNet.RPCvalue"/> instance.
+            </summary>
+            <returns>string describing this instance</returns>
+        </member>
+        <member name="P:DaoNet.RPCvalue.Value">
+            <summary>
+            Raw return value if there is one.
+            </summary>
+        </member>
+        <member name="P:DaoNet.RPCvalue.String">
+            <summary>
+            String return value if there is one.
+            </summary>
+        </member>
+        <member name="P:DaoNet.RPCvalue.Number">
+            <summary>
+            Double return value if there is one.
+            </summary>
+        </member>
+        <member name="P:DaoNet.RPCvalue.Bool">
+            <summary>
+            Bool return value if there is one.
+            </summary>
+        </member>
+        <member name="P:DaoNet.RPCvalue.IsNumber">
+            <summary>
+            Determine whether <see cref="P:DaoNet.RPCresponse.ReturnValue"/> is a double.
+            </summary>
+        </member>
+        <member name="P:DaoNet.RPCvalue.IsString">
+            <summary>
+            Determine whether <see cref="P:DaoNet.RPCresponse.ReturnValue"/> is a string.
+            </summary>
+        </member>
+        <member name="P:DaoNet.RPCvalue.IsNull">
+            <summary>
+            Determine whether <see cref="P:DaoNet.RPCresponse.ReturnValue"/> is null.
+            </summary>
+        </member>
+        <member name="P:DaoNet.RPCvalue.IsBool">
+            <summary>
+            Determine whether <see cref="P:DaoNet.RPCresponse.ReturnValue"/> is a bool.
+            </summary>
+        </member>
+        <member name="T:DaoNet.RPCresponse">
+            <summary>
+            Contains status code for RPC response.
+            </summary>
+        </member>
+        <member name="M:DaoNet.RPCresponse.ToString">
+            <summary>
+            Describes current <see cref="T:DaoNet.RPCresponse"/> instance.
+            </summary>
+            <returns>string describing this instance</returns>
+        </member>
+        <member name="P:DaoNet.RPCresponse.State">
+            <summary>
+            State of current RPC response.
+            </summary>
+        </member>
+        <member name="P:DaoNet.RPCresponse.Error">
+            <summary>
+            Error that occured during RPC response.
+            Will be <see cref="F:DaoNet.Error.None"/> if everything is ok.
+            </summary>
+        </member>
+        <member name="P:DaoNet.RPCresponse.ReturnValue">
+            <summary>
+            Container for typesafe retrieval of a potential return value.
+            </summary>
+        </member>
+        <member name="T:DaoNet.RPCresponse.StateCode">
+            <summary>
+            Possible state code of an RPC response.
+            </summary>
+        </member>
+        <member name="F:DaoNet.RPCresponse.StateCode.NoInfo">
+            <summary>
+            The RPC response was not yet received.
+            </summary>
+        </member>
+        <member name="F:DaoNet.RPCresponse.StateCode.Ok">
+            <summary>
+            RPC returned successful.
+            </summary>
+        </member>
+        <member name="F:DaoNet.RPCresponse.StateCode.Error">
+            <summary>
+            RPC returned unsuccessful.
+            </summary>
+        </member>
+    </members>
+</doc>

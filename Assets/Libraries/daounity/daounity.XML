@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>daounity</name>
+    </assembly>
+    <members>
+        <member name="T:DaoNet.DaoSettings">
+            <summary>
+            This is the main entry point.
+            It is recommended that you add an empty gameobject to your scene and attach this script.
+            This will automatically handle connecting and disconnecting.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoSettings.URI">
+            <summary>
+            Backend endpoint.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoSettings.PreserveThroughScenes">
+            <summary>
+            This will not allow destruction of the gameobject that has this script attached.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoSettings.GenAuthName">
+            <summary>
+            Useful for development to circumvent authentication.
+            </summary>
+        </member>
+        <member name="F:DaoNet.DaoSettings.ConsoleLogLevel">
+            <summary>
+            Sets logging verbosity.
+            </summary>
+        </member>
+        <member name="T:DaoNet.ZoneBehaviour">
+            <summary>
+            Inherit from this script to automatically create a zone callback.
+            If present on scene loading this zone will automatically be entered.
+            If not call <c>DaoAccess.Instance().AddZoneCallback</c> to add it.
+            Be aware that this script implements OnDestroy.
+            Should you want to override OnDestroy yourself, make sure to call <c>base.OnDestroy()</c>.
+            </summary>
+        </member>
+        <member name="F:DaoNet.ZoneBehaviour.Zone">
+            <summary>
+            The zone for which this callback receives events.
+            </summary>
+        </member>
+        <member name="F:DaoNet.ZoneBehaviour.EnterZone">
+            <summary>
+            When this gameobject gets instantiated, enter its zone.
+            Say no if you want to manually manage this by calling <c>DaoAccess.Instance().EnterZone(string)</c>.
+            </summary>
+        </member>
+        <member name="F:DaoNet.ZoneBehaviour.LeaveZone">
+            <summary>
+            If this gameobject is destroyed, leave its zone as well.
+            This will not happen if further callbacks for that zone are present.
+            Set to false if you want to manually manage this by calling <c>DaoAccess.Instance().LeaveZone(string)</c>.
+            </summary>
+        </member>
+        <member name="M:DaoNet.ZoneBehaviour.ZoneName">
+            <summary>
+            Implements <see cref="M:DaoNet.IZoneCallback.ZoneName"/>.
+            </summary>
+            <returns>zone.</returns>
+        </member>
+        <member name="M:DaoNet.ZoneBehaviour.Send(System.String)">
+            <summary>
+            Send a message to the zone this callback receives events for.
+            </summary>
+            <param name="message">message.</param>
+        </member>
+        <member name="M:DaoNet.ZoneBehaviour.OnEnterZone">
+            <summary>
+            Enforce implementation of <see cref="M:DaoNet.IZoneCallback.OnEnterZone"/>.
+            </summary>
+        </member>
+        <member name="M:DaoNet.ZoneBehaviour.OnLeaveZone">
+            <summary>
+            Enforce implementation of <see cref="M:DaoNet.IZoneCallback.OnLeaveZone"/>.
+            </summary>
+        </member>
+        <member name="M:DaoNet.ZoneBehaviour.OnMessage(System.String)">
+            <summary>
+            Enforce implementation of <see cref="M:DaoNet.IZoneCallback.OnMessage(System.String)"/>.
+            </summary>
+        </member>
+        <member name="M:DaoNet.ZoneBehaviour.OnConnectionLost">
+            <summary>
+            Enforce implementation of <see cref="M:DaoNet.IZoneCallback.OnConnectionLost"/>.
+            </summary>
+        </member>
+        <member name="M:DaoNet.ZoneBehaviour.OnReconnect">
+            <summary>
+            Enforce implementation of <see cref="M:DaoNet.IZoneCallback.OnReconnect"/>.
+            </summary>
+        </member>
+    </members>
+</doc>
