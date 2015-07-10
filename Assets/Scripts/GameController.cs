@@ -34,6 +34,7 @@ public class GameController : MonoBehaviour {
             .Add(pool.CreateAddViewSystem())
             .Add(pool.CreateRenderPositionSystem())
 
+            .Add(pool.CreateSendSystem())
             .Add(pool.CreateDestroySystem())
             .Add(pool.CreateScoreSystem());
     }

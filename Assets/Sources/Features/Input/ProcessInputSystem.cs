@@ -24,6 +24,9 @@ public class ProcessInputSystem : IReactiveSystem, ISetPool {
         var e = _pool.gameBoardCache.grid[input.x, input.y];
         if (e != null && e.isInteractive) {
             e.isDestroy = true;
+            if (!inputEntity.isIncoming) {
+                e.isSendable = true;
+            }
         }
 
         _pool.DestroyEntity(inputEntity);
