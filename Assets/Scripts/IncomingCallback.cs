@@ -13,6 +13,7 @@ public class IncomingCallback : ZoneBehaviour {
     }
 
     public override void OnMessage(string message) {
+        //receive position that was destroyed from a different client
         incPos = message.Split(':');
         Pools.pool.CreateEntity().IsIncoming(true).AddInput(int.Parse(incPos[0]), int.Parse(incPos[1]));
     }

@@ -34,6 +34,7 @@ public class GameController : MonoBehaviour {
             .Add(pool.CreateAddViewSystem())
             .Add(pool.CreateRenderPositionSystem())
 
+            //this will send the position of a soon to be destoyed entity
             .Add(pool.CreateSendSystem())
             .Add(pool.CreateDestroySystem())
             .Add(pool.CreateScoreSystem());

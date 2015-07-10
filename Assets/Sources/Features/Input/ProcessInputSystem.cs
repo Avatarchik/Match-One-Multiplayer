@@ -24,6 +24,7 @@ public class ProcessInputSystem : IReactiveSystem, ISetPool {
         var e = _pool.gameBoardCache.grid[input.x, input.y];
         if (e != null && e.isInteractive) {
             e.isDestroy = true;
+            // only send positions for destroyed entities by us
             if (!inputEntity.isIncoming) {
                 e.isSendable = true;
             }
