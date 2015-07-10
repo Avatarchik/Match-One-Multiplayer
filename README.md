@@ -1,6 +1,3 @@
-# Match One
-This is a simple and interactive Unity3d example project to show how to use Entitas. Entitas is a super fast Entity Component System specifically made for C# and Unity.
+# Match One Multiplayer
 
-Get Entitas here: https://github.com/sschmid/Entitas-CSharp
-
-![Match One](https://raw.githubusercontent.com/sschmid/Entitas-CSharp/develop/Readme/Images/Match-One.png)
+This is a simple Multiplayer integration for [Match One](https://github.com/sschmid/Match-One) using daogames [client library](https://www.daogames.com/downloads/).
